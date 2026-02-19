@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMORA — AI Photobooth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,opsz,wght@0,14..44,300;0,14..44,400;0,14..44,500;1,14..44,300;1,14..44,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════
+   LUMORA DESIGN SYSTEM
+   Editorial Monochrome · Black & White Only · No Color
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Design Tokens ───────────────────────────────────────────────── */
+:root {
+  /* Color */
+  --white:      #FFFFFF;
+  --black:      #000000;
+  --muted:      #666666;
+  --subtle:     #999999;
+  --ghost:      #CCCCCC;
+  --border:     #E5E5E5;
+  --border-mid: #D0D0D0;
+  --fill:       #F5F5F5;
+  --surface:    #FAFAFA;
+
+  /* Typography */
+  --serif:  'Cormorant Garamond', 'Garamond', Georgia, serif;
+  --sans:   'DM Sans', 'Helvetica Neue', Helvetica, sans-serif;
+
+  /* Type scale */
+  --t-10: 10px;
+  --t-11: 11px;
+  --t-12: 12px;
+  --t-13: 13px;
+  --t-14: 14px;
+  --t-16: 16px;
+  --t-18: 18px;
+  --t-22: 22px;
+  --t-28: 28px;
+  --t-36: 36px;
+  --t-48: 48px;
+  --t-64: 64px;
+  --t-80: 80px;
+  --t-104: 104px;
+
+  /* Spacing (8px base) */
+  --s1:  8px;
+  --s2:  16px;
+  --s3:  24px;
+  --s4:  32px;
+  --s5:  40px;
+  --s6:  48px;
+  --s8:  64px;
+  --s10: 80px;
+  --s12: 96px;
+  --s16: 128px;
+
+  /* Letter-spacing */
+  --ls-tight: -0.02em;
+  --ls-0:      0em;
+  --ls-1:      0.06em;
+  --ls-2:      0.10em;
+  --ls-3:      0.18em;
+  --ls-4:      0.26em;
+
+  /* Strip */
+  --strip-w:       176px;
+  --strip-tilt:    2deg;
+  --strip-shadow:  2px 4px 6px rgba(0,0,0,0.04), 8px 20px 40px rgba(0,0,0,0.10), 0 1px 1px rgba(0,0,0,0.06);
+  --strip-shadow-lift: 4px 8px 12px rgba(0,0,0,0.06), 16px 40px 80px rgba(0,0,0,0.14);
+
+  /* Motion */
+  --ease: cubic-bezier(0.25, 0, 0, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 200ms;
+  --t-base: 350ms;
+  --t-slow: 500ms;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  font-size: var(--t-14);
+  line-height: 1.5;
+  color: var(--black);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+button { font-family: inherit; cursor: pointer; }
+input  { font-family: inherit; }
+img    { display: block; }
+::selection { background: var(--black); color: var(--white); }
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SHARED PRIMITIVES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Screens ────────────────────────────────────────────────────── */
+.screen {
+  display: none;
+  flex-direction: column;
+  min-height: 100dvh;
+  opacity: 0;
+  animation: fadeUp var(--t-slow) var(--ease-out) forwards;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Logo ───────────────────────────────────────────────────────── */
+.logo {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: var(--t-13);
+  letter-spacing: var(--ls-4);
+  text-transform: uppercase;
+  color: var(--black);
+  text-decoration: none;
+  user-select: none;
+}
+
+/* ── Label ──────────────────────────────────────────────────────── */
+.label {
+  font-family: var(--sans);
+  font-size: var(--t-10);
+  font-weight: 500;
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Section divider label ──────────────────────────────────────── */
+.section-label {
+  font-size: var(--t-10);
+  font-weight: 500;
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--ghost);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--s1);
+  margin-bottom: var(--s3);
+}
+
+/* ── Buttons ────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px var(--s3);
+  font-family: var(--sans);
+  font-size: var(--t-11);
+  font-weight: 500;
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--black);
+  background: transparent;
+  border: 1px solid var(--black);
+  outline: none;
+  cursor: pointer;
+  transition:
+    background var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+}
+.btn:hover  { background: var(--black); color: var(--white); }
+.btn:active { opacity: 0.65; }
+.btn.wide   { padding: 14px var(--s5); font-size: var(--t-12); }
+.btn.full   { width: 100%; }
+
+.btn-ghost {
+  border-color: var(--border);
+  color: var(--muted);
+}
+.btn-ghost:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+
+.btn-bare {
+  border: none;
+  padding: 0;
+  font-size: var(--t-11);
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--muted);
+  background: none;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--border);
+  transition: color var(--t-fast), text-decoration-color var(--t-fast);
+}
+.btn-bare:hover { color: var(--black); text-decoration-color: var(--black); }
+
+/* ── Toggle ─────────────────────────────────────────────────────── */
+.toggle {
+  width: 32px;
+  height: 18px;
+  background: var(--border);
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--t-fast);
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  top: 3px; left: 3px;
+  background: var(--white);
+  transition: transform var(--t-fast) var(--ease);
+}
+.toggle.on { background: var(--black); }
+.toggle.on::after { transform: translateX(14px); }
+
+/* ── Hairline ───────────────────────────────────────────────────── */
+.line { height: 1px; background: var(--border); }
+
+/* ── Tag ────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  font-size: var(--t-10);
+  letter-spacing: var(--ls-2);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   DEV NAV
+   ═══════════════════════════════════════════════════════════════════ */
+.dev-nav {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 4px;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+}
+.dev-btn {
+  padding: 6px 12px;
+  font-size: var(--t-10);
+  letter-spacing: var(--ls-2);
+  text-transform: uppercase;
+  font-family: var(--sans);
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.dev-btn:hover { background: var(--fill); color: var(--black); border-color: var(--border); }
+.dev-btn.on { background: var(--black); color: var(--white); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCREEN 01 — LANDING
+   ═══════════════════════════════════════════════════════════════════ */
+#s-landing { background: var(--white); }
+
+/* Nav */
+.l-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: var(--s3) var(--s5);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  background: var(--white);
+}
+.l-nav-right {
+  display: flex; justify-content: flex-end;
+  align-items: center; gap: var(--s3);
+}
+
+/* Hero */
+.l-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--s16) var(--s5) var(--s10);
+  gap: var(--s5);
+}
+
+.l-eyebrow {
+  display: flex; align-items: center; gap: var(--s2);
+}
+.l-eyebrow-rule {
+  width: 28px; height: 1px; background: var(--border-mid);
+}
+
+.l-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(52px, 8vw, var(--t-104));
+  line-height: 0.96;
+  letter-spacing: var(--ls-tight);
+  color: var(--black);
+  max-width: 780px;
+}
+.l-headline em { font-style: italic; }
+
+.l-sub {
+  font-size: var(--t-16);
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 400px;
+  line-height: 1.7;
+}
+
+.l-cta-group {
+  display: flex; flex-direction: column; align-items: center; gap: var(--s2);
+  margin-top: var(--s2);
+}
+.l-cta-note {
+  font-size: var(--t-11);
+  letter-spacing: var(--ls-2);
+  color: var(--ghost);
+}
+
+/* Strip teaser */
+.l-strip-demo {
+  display: flex; gap: var(--s3); align-items: flex-end;
+  margin: var(--s3) 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.l-demo-strip {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 8px; padding-bottom: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--strip-shadow);
+  transform: rotate(var(--strip-tilt));
+}
+.l-demo-strip.neg { transform: rotate(-2deg); }
+.l-demo-frame {
+  width: 52px; height: 40px;
+  background: var(--fill);
+}
+
+/* Stats bar */
+.l-stats {
+  width: 100%;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.l-stat {
+  padding: var(--s5) var(--s4);
+  border-right: 1px solid var(--border);
+  text-align: left;
+}
+.l-stat:last-child { border-right: none; }
+.l-stat-num {
+  font-family: var(--serif);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 300;
+  letter-spacing: var(--ls-tight);
+  line-height: 1;
+  margin-bottom: var(--s1);
+}
+.l-stat-desc {
+  font-size: var(--t-11);
+  letter-spacing: var(--ls-2);
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Footer */
+.l-footer {
+  border-top: 1px solid var(--border);
+  padding: var(--s3) var(--s5);
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCREEN 02 — CAMERA
+   ═══════════════════════════════════════════════════════════════════ */
+#s-camera {}
+
+.c-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--s2) var(--s5);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  background: var(--white);
+}
+.c-nav-center {
+  display: flex; align-items: center; gap: var(--s2);
+}
+
+/* Shot progress pills in nav */
+.c-progress {
+  display: flex; gap: 4px; align-items: center;
+}
+.c-pip {
+  width: 20px; height: 4px;
+  background: var(--border);
+  transition: background var(--t-fast);
+}
+.c-pip.done   { background: var(--black); }
+.c-pip.active { background: var(--black); animation: pipPulse 1.2s ease infinite; }
+@keyframes pipPulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* Layout */
+.c-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 260px;
+}
+
+/* Viewport */
+.c-viewport-wrap {
+  display: flex; flex-direction: column;
+  padding: var(--s4) var(--s5) var(--s4);
+  gap: var(--s3);
+  border-right: 1px solid var(--border);
+}
+
+.c-viewport {
+  flex: 1;
+  min-height: 340px;
+  background: var(--fill);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* Live feed placeholder */
+.c-feed-bg {
+  position: absolute; inset: 0;
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+}
+.c-feed-text {
+  font-family: var(--serif);
+  font-size: var(--t-28);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--border);
+  letter-spacing: var(--ls-2);
+  user-select: none;
+}
+
+/* Corner marks */
+.c-corner {
+  position: absolute;
+  width: 18px; height: 18px;
+  border-color: rgba(0,0,0,0.2);
+  border-style: solid;
+  pointer-events: none;
+}
+.c-corner.tl { top: 16px; left: 16px; border-width: 1px 0 0 1px; }
+.c-corner.tr { top: 16px; right: 16px; border-width: 1px 1px 0 0; }
+.c-corner.bl { bottom: 16px; left: 16px; border-width: 0 0 1px 1px; }
+.c-corner.br { bottom: 16px; right: 16px; border-width: 0 1px 1px 0; }
+
+/* Rule of thirds grid (very subtle) */
+.c-grid-h, .c-grid-v {
+  position: absolute; pointer-events: none;
+  background: rgba(0,0,0,0.04);
+}
+.c-grid-h { left: 0; right: 0; height: 1px; }
+.c-grid-v { top: 0; bottom: 0; width: 1px; }
+.c-grid-h.t3 { top: 33.33%; }
+.c-grid-h.b3 { top: 66.66%; }
+.c-grid-v.l3 { left: 33.33%; }
+.c-grid-v.r3 { left: 66.66%; }
+
+/* Countdown overlay */
+.c-countdown {
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.92);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--s2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-base);
+}
+.c-countdown.show { opacity: 1; }
+
+.c-count-num {
+  font-family: var(--serif);
+  font-size: 140px;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--black);
+  letter-spacing: var(--ls-tight);
+  animation: countIn 1s var(--ease-out);
+}
+@keyframes countIn {
+  0%   { opacity: 0; transform: scale(1.4); }
+  30%  { opacity: 1; transform: scale(1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.7); }
+}
+
+.c-count-sub {
+  font-size: var(--t-11);
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Flash */
+.c-flash {
+  position: absolute; inset: 0;
+  background: var(--white);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-fast);
+}
+.c-flash.on { opacity: 1; transition: none; }
+
+/* Controls bar */
+.c-controls {
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.c-settings-left {
+  display: flex; align-items: center; gap: var(--s2);
+}
+
+/* Shutter */
+.c-shutter-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.c-shutter {
+  width: 60px; height: 60px;
+  border: 1.5px solid var(--black);
+  background: transparent;
+  position: relative;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t-fast);
+  flex-shrink: 0;
+}
+.c-shutter::before {
+  content: '';
+  width: 38px; height: 38px;
+  background: var(--black);
+  display: block;
+  transition: transform var(--t-fast) var(--ease), opacity var(--t-fast);
+}
+.c-shutter:hover { }
+.c-shutter:hover::before { transform: scale(0.88); }
+.c-shutter:active::before { transform: scale(0.75); }
+.c-shutter.active { background: var(--black); }
+.c-shutter.active::before { background: var(--white); transform: scale(0.8); }
+.c-shutter.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+.c-shutter-lbl {
+  font-size: var(--t-10);
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Sidebar */
+.c-sidebar {
+  display: flex; flex-direction: column;
+  padding: var(--s4) var(--s4);
+  gap: var(--s5);
+}
+
+.c-slots { display: flex; flex-direction: column; gap: 3px; }
+.c-slot {
+  height: 56px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.c-slot.active {
+  border-color: var(--black);
+  background: var(--white);
+  animation: slotBlink 2s ease infinite;
+}
+@keyframes slotBlink {
+  0%,100% { border-color: var(--black); }
+  50%      { border-color: var(--border-mid); }
+}
+.c-slot.done {
+  border-color: var(--black);
+  background: var(--black);
+}
+.c-slot-label {
+  font-size: var(--t-10);
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--ghost);
+  transition: color var(--t-fast);
+}
+.c-slot.active .c-slot-label { color: var(--muted); }
+.c-slot.done  .c-slot-label  { display: none; }
+.c-slot-check {
+  display: none;
+  width: 14px; height: 9px;
+  border-bottom: 1.5px solid var(--white);
+  border-left: 1.5px solid var(--white);
+  transform: rotate(-45deg) translateY(-2px);
+}
+.c-slot.done .c-slot-check { display: block; }
+
+.c-settings { display: flex; flex-direction: column; gap: 0; }
+.c-setting {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.c-setting:last-child { border-bottom: none; }
+.c-setting-key {
+  font-size: var(--t-11); letter-spacing: var(--ls-2);
+  text-transform: uppercase; color: var(--muted);
+}
+.c-setting-val {
+  font-size: var(--t-11); letter-spacing: var(--ls-1);
+  color: var(--black);
+}
+
+.c-hint {
+  font-size: var(--t-11); letter-spacing: var(--ls-1);
+  color: var(--ghost); line-height: 1.7;
+  margin-top: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCREEN 03 — PROCESSING
+   ═══════════════════════════════════════════════════════════════════ */
+#s-processing {
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+}
+
+.p-wrap {
+  display: flex; flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--s10) var(--s5);
+  gap: var(--s8);
+  max-width: 480px;
+}
+
+/* Animated strip skeleton */
+.p-strip {
+  position: relative;
+  display: flex; flex-direction: column;
+  gap: 3px;
+  padding: 10px;
+  padding-bottom: 16px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--strip-shadow);
+  transform: rotate(var(--strip-tilt));
+  animation: stripFloat 3.5s ease-in-out infinite;
+}
+@keyframes stripFloat {
+  0%,100% { transform: rotate(var(--strip-tilt)) translateY(0); }
+  50%      { transform: rotate(var(--strip-tilt)) translateY(-8px); }
+}
+
+.p-frame {
+  width: 88px; height: 66px;
+  background: var(--fill);
+  position: relative; overflow: hidden;
+}
+.p-frame::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(255,255,255,0.7) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmer 1.6s ease infinite;
+}
+.p-frame:nth-child(1)::after { animation-delay: 0s;    }
+.p-frame:nth-child(2)::after { animation-delay: 0.25s; }
+.p-frame:nth-child(3)::after { animation-delay: 0.5s;  }
+.p-frame:nth-child(4)::after { animation-delay: 0.75s; }
+@keyframes shimmer {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(220%); }
+}
+.p-strip-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 5px;
+}
+.p-strip-date, .p-strip-wm {
+  font-size: 7px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ghost);
+}
+
+/* Status */
+.p-status { display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
+.p-headline {
+  font-family: var(--serif);
+  font-size: var(--t-36);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: var(--ls-tight);
+  color: var(--black);
+  line-height: 1.1;
+}
+.p-step {
+  font-size: var(--t-11);
+  letter-spacing: var(--ls-3);
+  text-transform: uppercase;
+  color: var(--muted);
+  min-height: 14px;
+  transition: opacity var(--t-base);
+}
+
+/* Progress line */
+.p-bar {
+  width: 120px; height: 1px;
+  background: var(--border);
+  position: relative; overflow: hidden;
+}
+.p-bar-fill {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 0%;
+  background: var(--black);
+  transition: width 0.5s var(--ease-out);
+}
+
+/* Score cards */
+.p-scores {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--s1); width: 100%;
+}
+.p-score {
+  border: 1px solid var(--border);
+  padding: var(--s2) var(--s1);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity var(--t-base), transform var(--t-base);
+}
+.p-score.shown { opacity: 1; transform: none; }
+.p-score-key {
+  font-size: 9px; letter-spacing: var(--ls-3);
+  text-transform: uppercase; color: var(--ghost);
+}
+.p-score-val {
+  font-family: var(--serif);
+  font-size: var(--t-22); font-weight: 300;
+  color: var(--black); line-height: 1;
+}
+.p-score-bar {
+  width: 100%; height: 1px; background: var(--border); position: relative;
+}
+.p-score-fill {
+  position: absolute; top: 0; left: 0; height: 100%;
+  background: var(--black);
+  width: 0%;
+  transition: width 0.9s var(--ease-out);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCREEN 04 — PREVIEW (PRIMARY)
+   ═══════════════════════════════════════════════════════════════════ */
+#s-preview {}
+
+.v-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--s2) var(--s5);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  background: var(--white);
+}
+.v-nav-center { display: flex; align-items: center; gap: var(--s3); }
+
+/* Layout: canvas | sidebar */
+.v-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+}
+
+/* Canvas — primary strip stage */
+.v-canvas {
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--s10);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle graph paper pattern */
+.v-canvas::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── THE STRIP — primary UI element ──────────────────────────────── */
+.strip-stage {
+  position: relative; z-index: 1;
+  animation: stripDrop 0.7s var(--ease-out) both;
+}
+@keyframes stripDrop {
+  from { opacity: 0; transform: rotate(2deg) translateY(-20px); }
+  to   { opacity: 1; transform: rotate(2deg) translateY(0); }
+}
+
+.strip-outer {
+  transform: rotate(var(--strip-tilt));
+  box-shadow: var(--strip-shadow);
+  cursor: default;
+  transition: box-shadow var(--t-base) var(--ease), transform var(--t-base) var(--ease);
+}
+.strip-outer:hover {
+  box-shadow: var(--strip-shadow-lift);
+  transform: rotate(1deg) scale(1.015);
+}
+
+.strip-paper {
+  background: var(--white);
+  padding: 10px 10px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+  width: var(--strip-w);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.strip-photo {
+  width: 100%;
+  aspect-ratio: 3/2.2;
+  position: relative; overflow: hidden;
+  flex-shrink: 0;
+}
+.strip-photo-fill {
+  width: 100%; height: 100%;
+  background: var(--fill);
+  display: flex; align-items: center; justify-content: center;
+}
+.strip-photo-fill span {
+  font-size: 9px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ghost);
+}
+/* Simulated photo content */
+.strip-photo-fill.p1 { background: linear-gradient(150deg, #e4e4e4 0%, #c8c8c8 100%); }
+.strip-photo-fill.p2 { background: linear-gradient(150deg, #d8d8d8 0%, #bcbcbc 100%); }
+.strip-photo-fill.p3 { background: linear-gradient(150deg, #e0e0e0 0%, #c4c4c4 100%); }
+.strip-photo-fill.p4 { background: linear-gradient(150deg, #dadada 0%, #bebebe 100%); }
+
+/* Filter classes */
+.strip-paper.f-bw   .strip-photo-fill { filter: grayscale(100%) contrast(1.1); }
+.strip-paper.f-warm .strip-photo-fill { filter: sepia(25%) contrast(1.04) brightness(1.02); }
+.strip-paper.f-fade .strip-photo-fill { filter: contrast(0.82) brightness(1.12) saturate(0.6); }
+.strip-paper.f-matte .strip-photo-fill { filter: contrast(0.88) brightness(1.06) saturate(0.5) sepia(8%); }
+
+.strip-caption-row {
+  padding: 4px 0 2px;
+  border-bottom: 1px solid var(--border);
+}
+.strip-caption-input {
+  width: 100%;
+  border: none; background: transparent; outline: none;
+  font-family: var(--serif);
+  font-size: 10px; font-style: italic; font-weight: 300;
+  letter-spacing: 0.03em;
+  color: var(--black);
+  text-align: center;
+  caret-color: var(--black);
+}
+.strip-caption-input::placeholder { color: var(--border-mid); }
+
+.strip-foot {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-top: 2px;
+}
+.strip-ts {
+  font-family: var(--sans);
+  font-size: 7px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--ghost);
+  line-height: 1.5;
+}
+.strip-wm {
+  font-family: var(--serif);
+  font-size: 7px; font-style: italic;
+  letter-spacing: 0.03em; color: var(--border-mid);
+}
+
+/* ── Preview Sidebar ─────────────────────────────────────────────── */
+.v-sidebar {
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+
+.v-block {
+  padding: var(--s4) var(--s4);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Filters */
+.v-filters { display: flex; flex-direction: column; gap: 2px; }
+.v-filter-opt {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: 10px var(--s2);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  width: 100%; text-align: left;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.v-filter-opt:hover { background: var(--fill); }
+.v-filter-opt.on {
+  border-color: var(--black);
+  background: var(--white);
+}
+
+.v-filter-thumb {
+  width: 34px; height: 26px;
+  border: 1px solid var(--border);
+  flex-shrink: 0; overflow: hidden;
+}
+.vft { width: 100%; height: 100%; }
+.vft.natural { background: linear-gradient(135deg, #e8e8e8, #d4d4d4); }
+.vft.bw      { background: linear-gradient(135deg, #1a1a1a, #888); }
+.vft.warm    { background: linear-gradient(135deg, #d4b896, #ede0cc); }
+.vft.fade    { background: linear-gradient(135deg, #c8c8c8, #e0e0e0); opacity: 0.7; }
+.vft.matte   { background: linear-gradient(135deg, #b8b0a4, #d8d4cc); }
+
+.v-filter-info { flex: 1; }
+.v-filter-name { font-size: var(--t-13); color: var(--black); line-height: 1; margin-bottom: 2px; }
+.v-filter-desc { font-size: var(--t-11); letter-spacing: var(--ls-1); color: var(--muted); }
+
+.v-check {
+  width: 14px; height: 14px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.v-filter-opt.on .v-check {
+  background: var(--black); border-color: var(--black);
+}
+.v-check::after {
+  content: ''; display: none;
+  width: 5px; height: 3px;
+  border-left: 1.5px solid var(--white);
+  border-bottom: 1.5px solid var(--white);
+  transform: rotate(-45deg) translateY(-1px);
+}
+.v-filter-opt.on .v-check::after { display: block; }
+
+/* Caption sidebar field */
+.v-caption-field {
+  width: 100%; border: none; background: transparent;
+  font-family: var(--serif); font-size: var(--t-18);
+  font-style: italic; font-weight: 300;
+  color: var(--black); outline: none;
+  padding: var(--s1) 0;
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--t-fast);
+  caret-color: var(--black);
+}
+.v-caption-field::placeholder { color: var(--border); }
+.v-caption-field:focus { border-color: var(--black); }
+
+.v-caption-count {
+  font-size: var(--t-10); letter-spacing: var(--ls-2);
+  color: var(--ghost); text-align: right; margin-top: 6px;
+}
+
+/* Thumbnails */
+.v-thumbs {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+}
+.v-thumb {
+  aspect-ratio: 3/2.2;
+  border: 1px solid var(--border);
+  background: var(--fill);
+  position: relative; overflow: hidden;
+  cursor: pointer;
+  transition: border-color var(--t-fast);
+}
+.v-thumb:hover { border-color: var(--black); }
+.v-thumb-fill { width: 100%; height: 100%; }
+.v-thumb-num {
+  position: absolute; bottom: 3px; right: 4px;
+  font-size: 8px; letter-spacing: 0.04em; color: var(--ghost);
+}
+.v-thumb-bar {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: var(--border);
+}
+.v-thumb-score {
+  height: 100%; background: var(--black);
+  width: 0%; transition: width 0.8s var(--ease-out);
+}
+
+/* Tilt control */
+.v-tilt-row { display: flex; gap: 4px; }
+.v-tilt-btn {
+  flex: 1; padding: 8px 0;
+  font-size: var(--t-11); letter-spacing: var(--ls-2);
+  font-family: var(--sans); font-weight: 500;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.v-tilt-btn:hover { background: var(--fill); border-color: var(--border-mid); color: var(--black); }
+.v-tilt-btn.on { background: var(--black); color: var(--white); border-color: var(--black); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCREEN 05 — DOWNLOAD & SHARE
+   ═══════════════════════════════════════════════════════════════════ */
+#s-download {}
+
+.d-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--s2) var(--s5);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  background: var(--white);
+}
+
+.d-layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Format preview column */
+.d-preview-col {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--s5);
+  padding: var(--s8) var(--s8);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+/* Format tabs */
+.d-tabs {
+  display: flex;
+  border: 1px solid var(--border);
+  width: 100%; max-width: 380px;
+}
+.d-tab {
+  flex: 1; padding: 11px var(--s2);
+  font-size: var(--t-11); font-weight: 500;
+  letter-spacing: var(--ls-3); text-transform: uppercase;
+  font-family: var(--sans);
+  border: none; border-right: 1px solid var(--border);
+  background: transparent; color: var(--muted);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.d-tab:last-child { border-right: none; }
+.d-tab:hover:not(.on) { background: var(--fill); color: var(--black); }
+.d-tab.on { background: var(--black); color: var(--white); }
+
+/* Format frames */
+.d-frame-area {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 280px; width: 100%; max-width: 380px;
+}
+
+/* Classic strip format */
+.d-classic { display: none; }
+.d-classic.show { display: block; }
+.d-classic-inner {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 8px; padding-bottom: 14px;
+  background: var(--white);
+  border: 1px solid rgba(0,0,0,0.07);
+  box-shadow: var(--strip-shadow);
+  width: 120px;
+}
+.d-classic-photo {
+  width: 100%; aspect-ratio: 3/2.2;
+  background: var(--fill);
+}
+.d-classic-foot { padding-top: 5px; display: flex; justify-content: space-between; }
+.d-classic-ts, .d-classic-wm {
+  font-size: 6px; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--ghost);
+}
+
+/* Story format */
+.d-story { display: none; }
+.d-story.show { display: flex; }
+.d-story-card {
+  width: 160px;
+  aspect-ratio: 9/16;
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--strip-shadow);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: var(--s2); gap: var(--s1);
+}
+.d-story-strip {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 6px; background: var(--white);
+  border: 1px solid rgba(0,0,0,0.06);
+  width: 100%;
+}
+.d-story-photo {
+  width: 100%; aspect-ratio: 3/2;
+  background: var(--fill);
+}
+.d-story-meta {
+  width: 100%; display: flex; justify-content: space-between;
+  padding: 6px 2px 0;
+}
+.d-story-cap, .d-story-lm {
+  font-size: 7px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ghost);
+}
+
+/* Square format */
+.d-square { display: none; }
+.d-square.show { display: flex; }
+.d-square-card {
+  width: 220px;
+  aspect-ratio: 1;
+  background: var(--white);
+  border: 1px solid var(--border);
+  box-shadow: var(--strip-shadow);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: var(--s2);
+}
+.d-sq-photo {
+  aspect-ratio: 1;
+  background: var(--fill);
+}
+
+/* Specs */
+.d-specs {
+  font-size: var(--t-11); letter-spacing: var(--ls-2);
+  text-transform: uppercase; color: var(--ghost);
+  text-align: center;
+}
+
+/* Actions column */
+.d-actions {
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: var(--s8) var(--s8);
+  gap: var(--s6);
+}
+
+.d-headline {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 300; line-height: 1.0;
+  letter-spacing: var(--ls-tight);
+  color: var(--black);
+}
+.d-headline em { font-style: italic; }
+
+.d-subtext {
+  font-size: var(--t-14); font-weight: 300;
+  color: var(--muted); line-height: 1.7;
+  max-width: 340px;
+}
+
+/* Download list */
+.d-list { display: flex; flex-direction: column; gap: 4px; }
+.d-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px var(--s3);
+  border: 1px solid var(--border);
+  background: transparent;
+  width: 100%; text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast),
+    color var(--t-fast);
+  font-family: var(--sans);
+}
+.d-item:hover { background: var(--black); border-color: var(--black); }
+.d-item:hover .d-item-name { color: var(--white); }
+.d-item:hover .d-item-spec { color: rgba(255,255,255,0.45); }
+.d-item:hover .d-item-arrow { color: var(--white); transform: translateY(2px); }
+
+.d-item-left { display: flex; flex-direction: column; gap: 2px; }
+.d-item-name { font-size: var(--t-14); color: var(--black); transition: color var(--t-fast); }
+.d-item-spec {
+  font-size: var(--t-10); letter-spacing: var(--ls-2);
+  text-transform: uppercase; color: var(--muted);
+  transition: color var(--t-fast);
+}
+.d-item-arrow {
+  font-size: var(--t-18); color: var(--muted);
+  transition: color var(--t-fast), transform var(--t-fast);
+  line-height: 1;
+}
+
+/* Share */
+.d-share { display: flex; flex-direction: column; gap: var(--s2); }
+.d-share-row { display: flex; gap: 4px; }
+.d-share-input {
+  flex: 1; padding: 11px var(--s2);
+  border: 1px solid var(--border);
+  background: var(--fill);
+  font-family: var(--sans);
+  font-size: var(--t-11); letter-spacing: var(--ls-1);
+  color: var(--muted); outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .c-layout { grid-template-columns: 1fr; }
+  .c-sidebar { border-top: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; gap: var(--s4); }
+  .c-slots { flex-direction: row; }
+  .c-slot { flex: 1; height: 44px; }
+  .c-hint { display: none; }
+
+  .v-layout { grid-template-columns: 1fr; }
+  .v-canvas { min-height: 380px; border-right: none; border-bottom: 1px solid var(--border); }
+  .v-canvas::before { opacity: 0.25; }
+
+  .d-layout { grid-template-columns: 1fr; }
+  .d-preview-col { border-right: none; border-bottom: 1px solid var(--border); padding: var(--s6) var(--s4); }
+  .d-actions { padding: var(--s6) var(--s4); }
+
+  .l-stats { grid-template-columns: repeat(2, 1fr); }
+  .l-stat:nth-child(2) { border-right: none; }
+  .l-stat:nth-child(3) { border-top: 1px solid var(--border); }
+  .l-stat:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+}
+
+@media (max-width: 600px) {
+  .l-nav-right { display: none; }
+  .l-strip-demo { display: none; }
+  .l-hero { padding: var(--s12) var(--s4) var(--s8); }
+  .l-stats { grid-template-columns: 1fr 1fr; }
+  :root { --strip-w: 156px; }
+  .v-canvas { padding: var(--s6) var(--s4); }
+  .d-headline { font-size: 32px; }
+  .p-scores { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ── Dev navigation ──────────────────────────────────────────── -->
+<nav class="dev-nav">
+  <button class="dev-btn on"  onclick="go('landing')">01 Landing</button>
+  <button class="dev-btn"     onclick="go('camera')">02 Camera</button>
+  <button class="dev-btn"     onclick="go('processing')">03 Processing</button>
+  <button class="dev-btn"     onclick="go('preview')">04 Preview</button>
+  <button class="dev-btn"     onclick="go('download')">05 Download</button>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     01 · LANDING PAGE
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="s-landing" class="screen active">
+
+  <header class="l-nav">
+    <div></div>
+    <a href="#" class="logo" onclick="return false">Lumora</a>
+    <div class="l-nav-right">
+      <span class="label">Est. 2025</span>
+      <div style="width:1px;height:14px;background:var(--border)"></div>
+      <button class="btn-bare">About</button>
+    </div>
+  </header>
+
+  <main class="l-hero">
+
+    <div class="l-eyebrow">
+      <div class="l-eyebrow-rule"></div>
+      <span class="label">AI Photobooth</span>
+      <div class="l-eyebrow-rule"></div>
+    </div>
+
+    <h1 class="l-headline">
+      Four frames.<br><em>One memory.</em>
+    </h1>
+
+    <!-- Decorative strip cluster -->
+    <div class="l-strip-demo" aria-hidden="true">
+      <div class="l-demo-strip neg" style="transform:rotate(-3deg);opacity:0.4">
+        <div class="l-demo-frame" style="background:#d8d8d8"></div>
+        <div class="l-demo-frame" style="background:#e0e0e0"></div>
+        <div class="l-demo-frame" style="background:#d4d4d4"></div>
+        <div class="l-demo-frame" style="background:#dcdc dc"></div>
+      </div>
+      <div class="l-demo-strip" style="z-index:2">
+        <div class="l-demo-frame" style="background:#e4e4e4"></div>
+        <div class="l-demo-frame" style="background:#d8d8d8"></div>
+        <div class="l-demo-frame" style="background:#e0e0e0"></div>
+        <div class="l-demo-frame" style="background:#dadada"></div>
+      </div>
+    </div>
+
+    <p class="l-sub">
+      An AI-powered virtual photobooth. Four shots, automatic
+      countdown, cinematic filters — your strip ready to
+      share in under a minute.
+    </p>
+
+    <div class="l-cta-group">
+      <button class="btn wide" onclick="go('camera')">Begin Session</button>
+      <span class="l-cta-note">No account · No uploads · Stays on your device</span>
+    </div>
+
+  </main>
+
+  <div class="l-stats">
+    <div class="l-stat">
+      <div class="l-stat-num">4</div>
+      <p class="l-stat-desc">Photos captured<br>automatically</p>
+    </div>
+    <div class="l-stat">
+      <div class="l-stat-num">3s</div>
+      <p class="l-stat-desc">Countdown per<br>shot</p>
+    </div>
+    <div class="l-stat">
+      <div class="l-stat-num">5</div>
+      <p class="l-stat-desc">Cinematic<br>filter presets</p>
+    </div>
+    <div class="l-stat">
+      <div class="l-stat-num">3</div>
+      <p class="l-stat-desc">Export formats<br>included</p>
+    </div>
+  </div>
+
+  <footer class="l-footer">
+    <span class="label" style="color:var(--ghost)">Lumora — AI Photobooth Platform</span>
+    <span class="label" style="color:var(--ghost)">© 2025</span>
+  </footer>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     02 · CAMERA SCREEN
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="s-camera" class="screen">
+
+  <header class="c-nav">
+    <button class="btn-bare" onclick="go('landing')">← Back</button>
+    <div class="c-nav-center">
+      <div class="c-progress" id="c-progress">
+        <div class="c-pip active" data-p="1"></div>
+        <div class="c-pip"        data-p="2"></div>
+        <div class="c-pip"        data-p="3"></div>
+        <div class="c-pip"        data-p="4"></div>
+      </div>
+      <span class="logo">Lumora</span>
+      <span class="label" id="c-shot-label" style="min-width:60px">Shot 1 / 4</span>
+    </div>
+    <div class="tag">AI Mode</div>
+  </header>
+
+  <div class="c-layout">
+
+    <!-- Viewport -->
+    <div class="c-viewport-wrap">
+
+      <div class="c-viewport">
+        <!-- Background feed -->
+        <div class="c-feed-bg">
+          <span class="c-feed-text">Camera Preview</span>
+        </div>
+
+        <!-- Rule-of-thirds guides -->
+        <div class="c-grid-h t3"></div>
+        <div class="c-grid-h b3"></div>
+        <div class="c-grid-v l3"></div>
+        <div class="c-grid-v r3"></div>
+
+        <!-- Corner marks -->
+        <div class="c-corner tl"></div>
+        <div class="c-corner tr"></div>
+        <div class="c-corner bl"></div>
+        <div class="c-corner br"></div>
+
+        <!-- Countdown overlay -->
+        <div class="c-countdown" id="c-countdown">
+          <span class="c-count-num" id="c-count-num">3</span>
+          <span class="c-count-sub" id="c-count-sub">Shot 1 of 4</span>
+        </div>
+
+        <!-- Flash -->
+        <div class="c-flash" id="c-flash"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="c-controls">
+
+        <div class="c-settings-left">
+          <div style="display:flex;flex-direction:column;gap:5px;align-items:center">
+            <span class="label" style="font-size:9px">Mirror</span>
+            <div class="toggle on" id="c-mirror" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <div class="c-shutter-wrap">
+          <button
+            class="c-shutter"
+            id="c-shutter"
+            onclick="startCapture()"
+            aria-label="Start photo sequence"
+          ></button>
+          <span class="c-shutter-lbl" id="c-shutter-lbl">Tap to begin</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:var(--s2)">
+          <div class="tag">HD</div>
+          <div class="tag">720p</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="c-sidebar">
+
+      <div>
+        <p class="section-label">Session</p>
+        <div class="c-slots" id="c-slots">
+          <div class="c-slot active" data-s="1">
+            <span class="c-slot-label">01</span>
+            <div class="c-slot-check"></div>
+          </div>
+          <div class="c-slot" data-s="2">
+            <span class="c-slot-label">02</span>
+            <div class="c-slot-check"></div>
+          </div>
+          <div class="c-slot" data-s="3">
+            <span class="c-slot-label">03</span>
+            <div class="c-slot-check"></div>
+          </div>
+          <div class="c-slot" data-s="4">
+            <span class="c-slot-label">04</span>
+            <div class="c-slot-check"></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="section-label">Settings</p>
+        <div class="c-settings">
+          <div class="c-setting">
+            <span class="c-setting-key">Resolution</span>
+            <span class="c-setting-val">1280 × 720</span>
+          </div>
+          <div class="c-setting">
+            <span class="c-setting-key">Quality</span>
+            <span class="c-setting-val">JPEG · 92%</span>
+          </div>
+          <div class="c-setting">
+            <span class="c-setting-key">Countdown</span>
+            <span class="c-setting-val">3 seconds</span>
+          </div>
+          <div class="c-setting">
+            <span class="c-setting-key">AI Score</span>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="c-hint">
+        Face the camera and press the shutter.
+        Each shot will count down from 3.
+        Stay still when the flash fires.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     03 · PROCESSING SCREEN
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="s-processing" class="screen">
+  <div class="p-wrap">
+
+    <!-- Animated strip skeleton -->
+    <div class="p-strip">
+      <div class="p-frame"></div>
+      <div class="p-frame"></div>
+      <div class="p-frame"></div>
+      <div class="p-frame"></div>
+      <div class="p-strip-foot">
+        <span class="p-strip-date">Lumora · AI</span>
+        <span class="p-strip-wm">Analysing</span>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="p-status">
+      <h2 class="p-headline">
+        Selecting your<br><em>best moments</em>
+      </h2>
+      <p class="p-step" id="p-step">Detecting faces &amp; expressions</p>
+      <div class="p-bar">
+        <div class="p-bar-fill" id="p-bar"></div>
+      </div>
+    </div>
+
+    <!-- Score cards -->
+    <div class="p-scores">
+      <div class="p-score" id="ps-smile">
+        <span class="p-score-key">Smile</span>
+        <span class="p-score-val" id="pv-smile">—</span>
+        <div class="p-score-bar"><div class="p-score-fill" id="pb-smile"></div></div>
+      </div>
+      <div class="p-score" id="ps-eyes">
+        <span class="p-score-key">Eyes</span>
+        <span class="p-score-val" id="pv-eyes">—</span>
+        <div class="p-score-bar"><div class="p-score-fill" id="pb-eyes"></div></div>
+      </div>
+      <div class="p-score" id="ps-sharp">
+        <span class="p-score-key">Sharp</span>
+        <span class="p-score-val" id="pv-sharp">—</span>
+        <div class="p-score-bar"><div class="p-score-fill" id="pb-sharp"></div></div>
+      </div>
+      <div class="p-score" id="ps-light">
+        <span class="p-score-key">Light</span>
+        <span class="p-score-val" id="pv-light">—</span>
+        <div class="p-score-bar"><div class="p-score-fill" id="pb-light"></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     04 · PREVIEW SCREEN (PRIMARY)
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="s-preview" class="screen">
+
+  <header class="v-nav">
+    <button class="btn-bare" onclick="go('camera')">← Retake</button>
+    <div class="v-nav-center">
+      <span class="logo">Lumora</span>
+    </div>
+    <button class="btn" onclick="go('download')">Download &amp; Share</button>
+  </header>
+
+  <div class="v-layout">
+
+    <!-- Strip canvas — primary stage -->
+    <div class="v-canvas" id="v-canvas">
+      <div class="strip-stage">
+        <div class="strip-outer" id="strip-outer">
+          <div class="strip-paper" id="strip-paper">
+
+            <div class="strip-photo">
+              <div class="strip-photo-fill p1"></div>
+            </div>
+            <div class="strip-photo">
+              <div class="strip-photo-fill p2"></div>
+            </div>
+            <div class="strip-photo">
+              <div class="strip-photo-fill p3"></div>
+            </div>
+            <div class="strip-photo">
+              <div class="strip-photo-fill p4"></div>
+            </div>
+
+            <div class="strip-caption-row">
+              <input
+                class="strip-caption-input"
+                type="text"
+                id="strip-caption-input"
+                placeholder="add a caption…"
+                maxlength="40"
+                aria-label="Strip caption"
+              >
+            </div>
+
+            <div class="strip-foot">
+              <div class="strip-ts">
+                <span id="strip-date"></span><br>
+                lumora.app
+              </div>
+              <span class="strip-wm">Made with Lumora</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="v-sidebar">
+
+      <!-- Filters -->
+      <div class="v-block">
+        <p class="section-label">Filter</p>
+        <div class="v-filters">
+
+          <button class="v-filter-opt on" data-f="" onclick="applyFilter(this)">
+            <div class="v-filter-thumb"><div class="vft natural"></div></div>
+            <div class="v-filter-info">
+              <div class="v-filter-name">Natural</div>
+              <div class="v-filter-desc">No processing</div>
+            </div>
+            <div class="v-check"></div>
+          </button>
+
+          <button class="v-filter-opt" data-f="f-bw" onclick="applyFilter(this)">
+            <div class="v-filter-thumb"><div class="vft bw"></div></div>
+            <div class="v-filter-info">
+              <div class="v-filter-name">Noir</div>
+              <div class="v-filter-desc">B&amp;W · High contrast</div>
+            </div>
+            <div class="v-check"></div>
+          </button>
+
+          <button class="v-filter-opt" data-f="f-warm" onclick="applyFilter(this)">
+            <div class="v-filter-thumb"><div class="vft warm"></div></div>
+            <div class="v-filter-info">
+              <div class="v-filter-name">Warm</div>
+              <div class="v-filter-desc">Sepia tones</div>
+            </div>
+            <div class="v-check"></div>
+          </button>
+
+          <button class="v-filter-opt" data-f="f-fade" onclick="applyFilter(this)">
+            <div class="v-filter-thumb"><div class="vft fade"></div></div>
+            <div class="v-filter-info">
+              <div class="v-filter-name">Fade</div>
+              <div class="v-filter-desc">Soft analog</div>
+            </div>
+            <div class="v-check"></div>
+          </button>
+
+          <button class="v-filter-opt" data-f="f-matte" onclick="applyFilter(this)">
+            <div class="v-filter-thumb"><div class="vft matte"></div></div>
+            <div class="v-filter-info">
+              <div class="v-filter-name">Matte</div>
+              <div class="v-filter-desc">Film muted tones</div>
+            </div>
+            <div class="v-check"></div>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Caption -->
+      <div class="v-block">
+        <p class="section-label">Caption</p>
+        <input
+          class="v-caption-field"
+          type="text"
+          placeholder="A memory worth keeping…"
+          maxlength="48"
+          id="v-caption"
+          oninput="syncCaption(this)"
+        >
+        <p class="v-caption-count"><span id="v-count">0</span>&thinsp;/&thinsp;48</p>
+      </div>
+
+      <!-- Thumbnails -->
+      <div class="v-block">
+        <p class="section-label">Your 4 Shots</p>
+        <div class="v-thumbs">
+          <div class="v-thumb">
+            <div class="v-thumb-fill p1" style="width:100%;height:100%;background:linear-gradient(150deg,#e4e4e4,#c8c8c8)"></div>
+            <span class="v-thumb-num">01</span>
+            <div class="v-thumb-bar"><div class="v-thumb-score" id="vs-1"></div></div>
+          </div>
+          <div class="v-thumb">
+            <div class="v-thumb-fill" style="width:100%;height:100%;background:linear-gradient(150deg,#d8d8d8,#bcbcbc)"></div>
+            <span class="v-thumb-num">02</span>
+            <div class="v-thumb-bar"><div class="v-thumb-score" id="vs-2"></div></div>
+          </div>
+          <div class="v-thumb">
+            <div class="v-thumb-fill" style="width:100%;height:100%;background:linear-gradient(150deg,#e0e0e0,#c4c4c4)"></div>
+            <span class="v-thumb-num">03</span>
+            <div class="v-thumb-bar"><div class="v-thumb-score" id="vs-3"></div></div>
+          </div>
+          <div class="v-thumb">
+            <div class="v-thumb-fill" style="width:100%;height:100%;background:linear-gradient(150deg,#dadada,#bebebe)"></div>
+            <span class="v-thumb-num">04</span>
+            <div class="v-thumb-bar"><div class="v-thumb-score" id="vs-4"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tilt -->
+      <div class="v-block">
+        <p class="section-label">Strip Tilt</p>
+        <div class="v-tilt-row">
+          <button class="v-tilt-btn"     onclick="setTilt(this,-2)">−2°</button>
+          <button class="v-tilt-btn"     onclick="setTilt(this, 0)">Flat</button>
+          <button class="v-tilt-btn on"  onclick="setTilt(this, 2)" id="tilt-default">+2°</button>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="v-block" style="margin-top:auto; border-bottom:none">
+        <button class="btn full wide" style="margin-bottom:var(--s2)" onclick="go('download')">
+          Download &amp; Share
+        </button>
+        <button class="btn-bare full" style="width:100%;text-align:center;display:block" onclick="go('camera')">
+          Retake all photos
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     05 · DOWNLOAD & SHARE
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="s-download" class="screen">
+
+  <header class="d-nav">
+    <button class="btn-bare" onclick="go('preview')">← Preview</button>
+    <span class="logo">Lumora</span>
+    <button class="btn-bare" onclick="go('landing')">New Session</button>
+  </header>
+
+  <div class="d-layout">
+
+    <!-- Format preview -->
+    <div class="d-preview-col">
+
+      <div class="d-tabs">
+        <button class="d-tab on" onclick="setFmt(this,'classic')">Classic</button>
+        <button class="d-tab"    onclick="setFmt(this,'story')">Story</button>
+        <button class="d-tab"    onclick="setFmt(this,'square')">Square</button>
+      </div>
+
+      <div class="d-frame-area">
+
+        <!-- Classic vertical strip -->
+        <div class="d-classic show" id="df-classic">
+          <div class="d-classic-inner">
+            <div class="d-classic-photo" style="background:#e8e8e8"></div>
+            <div class="d-classic-photo" style="background:#e0e0e0"></div>
+            <div class="d-classic-photo" style="background:#e4e4e4"></div>
+            <div class="d-classic-photo" style="background:#dadada"></div>
+            <div class="d-classic-foot">
+              <span class="d-classic-ts">lumora.app</span>
+              <span class="d-classic-wm">Lumora</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram story -->
+        <div class="d-story" id="df-story">
+          <div class="d-story-card">
+            <div class="d-story-strip">
+              <div class="d-story-photo" style="background:#e8e8e8"></div>
+              <div class="d-story-photo" style="background:#e0e0e0"></div>
+              <div class="d-story-photo" style="background:#e4e4e4"></div>
+              <div class="d-story-photo" style="background:#dadada"></div>
+            </div>
+            <div class="d-story-meta">
+              <span class="d-story-cap">A memory</span>
+              <span class="d-story-lm">Lumora</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Square post -->
+        <div class="d-square" id="df-square">
+          <div class="d-square-card">
+            <div class="d-sq-photo" style="background:#e8e8e8"></div>
+            <div class="d-sq-photo" style="background:#e0e0e0"></div>
+            <div class="d-sq-photo" style="background:#e4e4e4"></div>
+            <div class="d-sq-photo" style="background:#dadada"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="d-specs" id="d-specs">2:6 ratio · 1200 × 3600 px · PNG</p>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="d-actions">
+
+      <div>
+        <h2 class="d-headline">Save &amp;<br><em>share your</em><br>moment.</h2>
+        <p class="d-subtext" style="margin-top:var(--s3)">
+          High-resolution exports in every format.
+          No watermark on downloaded files.
+          Your photos never leave your device.
+        </p>
+      </div>
+
+      <div class="d-list">
+        <button class="d-item" onclick="dl(this,'strip.png')">
+          <div class="d-item-left">
+            <span class="d-item-name">Classic Strip</span>
+            <span class="d-item-spec">PNG · 1200 × 3600 px · 2:6 ratio</span>
+          </div>
+          <span class="d-item-arrow">↓</span>
+        </button>
+        <button class="d-item" onclick="dl(this,'story.png')">
+          <div class="d-item-left">
+            <span class="d-item-name">Instagram Story</span>
+            <span class="d-item-spec">PNG · 1080 × 1920 px · 9:16</span>
+          </div>
+          <span class="d-item-arrow">↓</span>
+        </button>
+        <button class="d-item" onclick="dl(this,'square.png')">
+          <div class="d-item-left">
+            <span class="d-item-name">Square Post</span>
+            <span class="d-item-spec">PNG · 1080 × 1080 px · 1:1</span>
+          </div>
+          <span class="d-item-arrow">↓</span>
+        </button>
+        <button class="d-item btn-ghost" onclick="go('camera')" style="border-color:var(--border);color:var(--muted)">
+          <div class="d-item-left">
+            <span class="d-item-name" style="color:inherit">Retake Photos</span>
+            <span class="d-item-spec">Start a new session</span>
+          </div>
+          <span class="d-item-arrow" style="color:inherit">↺</span>
+        </button>
+      </div>
+
+      <div class="d-share">
+        <span class="label">Share Link</span>
+        <div class="d-share-row">
+          <input class="d-share-input" type="text" value="lumora.app/s/x7k2m" readonly aria-label="Share link">
+          <button class="btn" id="copy-btn" onclick="copyLink()">Copy</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ── Screen routing ───────────────────────────────────────────── */
+const screens = ['landing','camera','processing','preview','download'];
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.animation = 'none';
+  });
+  const target = document.getElementById('s-' + id);
+  if (!target) return;
+  // Force reflow to restart animation
+  void target.offsetWidth;
+  target.style.animation = '';
+  target.classList.add('active');
+  window.scrollTo(0,0);
+
+  // Sync dev nav
+  document.querySelectorAll('.dev-btn').forEach((b,i) => {
+    b.classList.toggle('on', screens[i] === id);
+  });
+
+  if (id === 'processing') runProcessing();
+  if (id === 'preview')    initPreview();
+  if (id === 'camera')     resetCamera();
+}
+
+/* ── CAMERA FLOW ──────────────────────────────────────────────── */
+let shooting = false;
+let shotsDone = 0;
+
+function resetCamera() {
+  shooting = false;
+  shotsDone = 0;
+  document.getElementById('c-shutter').classList.remove('active','disabled');
+  document.getElementById('c-shutter-lbl').textContent = 'Tap to begin';
+  document.getElementById('c-shot-label').textContent = 'Shot 1 / 4';
+
+  // Reset pips
+  document.querySelectorAll('.c-pip').forEach((p,i) => {
+    p.classList.toggle('done', false);
+    p.classList.toggle('active', i === 0);
+  });
+
+  // Reset slots
+  document.querySelectorAll('.c-slot').forEach((s,i) => {
+    s.classList.remove('done','active');
+    if (i === 0) s.classList.add('active');
+  });
+}
+
+function startCapture() {
+  if (shooting) return;
+  shooting = true;
+  document.getElementById('c-shutter').classList.add('disabled');
+  document.getElementById('c-shutter-lbl').textContent = 'Capturing…';
+  shotsDone = 0;
+  doShot();
+}
+
+function doShot() {
+  const n = shotsDone + 1;
+  document.getElementById('c-shot-label').textContent = `Shot ${n} / 4`;
+
+  const cd = document.getElementById('c-countdown');
+  const numEl = document.getElementById('c-count-num');
+  const subEl = document.getElementById('c-count-sub');
+  subEl.textContent = `Shot ${n} of 4`;
+
+  let tick = 3;
+  numEl.textContent = tick;
+  numEl.style.animation = 'none';
+  void numEl.offsetWidth;
+  numEl.style.animation = 'countIn 1s var(--ease-out)';
+  cd.classList.add('show');
+
+  const iv = setInterval(() => {
+    tick--;
+    if (tick > 0) {
+      numEl.textContent = tick;
+      numEl.style.animation = 'none';
+      void numEl.offsetWidth;
+      numEl.style.animation = 'countIn 1s var(--ease-out)';
+    } else {
+      clearInterval(iv);
+      cd.classList.remove('show');
+      flash(() => {
+        markDone(n);
+        shotsDone++;
+        if (shotsDone < 4) {
+          setTimeout(doShot, 900);
+        } else {
+          setTimeout(() => go('processing'), 500);
+        }
+      });
+    }
+  }, 1000);
+}
+
+function flash(cb) {
+  const f = document.getElementById('c-flash');
+  f.classList.add('on');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      f.classList.remove('on');
+      f.style.transition = 'opacity 280ms var(--ease-out)';
+      setTimeout(() => { f.style.transition = ''; cb && cb(); }, 300);
+    });
+  });
+}
+
+function markDone(n) {
+  // Pips
+  document.querySelectorAll('.c-pip').forEach((p, i) => {
+    p.classList.toggle('done',   i < n);
+    p.classList.toggle('active', i === n);
+  });
+  // Slots
+  document.querySelectorAll('.c-slot').forEach((s, i) => {
+    s.classList.toggle('done',   i < n);
+    s.classList.toggle('active', i === n);
+  });
+}
+
+/* ── PROCESSING ANIMATION ─────────────────────────────────────── */
+const steps = [
+  { t:'Detecting faces & expressions',         pct: 12 },
+  { t:'Computing smile scores',                pct: 30 },
+  { t:'Measuring eye openness (EAR)',          pct: 48 },
+  { t:'Analysing sharpness & lighting',        pct: 65 },
+  { t:'Ranking frames by composite score',     pct: 82 },
+  { t:'Composing your photobooth strip',       pct: 100 },
+];
+
+const scoreData = {
+  smile: { v: .89, label: '.89' },
+  eyes:  { v: .93, label: '.93' },
+  sharp: { v: .77, label: '.77' },
+  light: { v: .84, label: '.84' },
+};
+
+function runProcessing() {
+  // Reset
+  const bar = document.getElementById('p-bar');
+  bar.style.width = '0%';
+  document.getElementById('p-step').textContent = '';
+  ['smile','eyes','sharp','light'].forEach(k => {
+    document.getElementById(`ps-${k}`).classList.remove('shown');
+    document.getElementById(`pv-${k}`).textContent = '—';
+    document.getElementById(`pb-${k}`).style.width = '0%';
+  });
+
+  // Steps
+  steps.forEach(({t, pct}, i) => {
+    setTimeout(() => {
+      const stepEl = document.getElementById('p-step');
+      stepEl.style.opacity = 0;
+      setTimeout(() => {
+        stepEl.textContent = t;
+        stepEl.style.opacity = 1;
+        stepEl.style.transition = 'opacity 300ms';
+      }, 150);
+      bar.style.width = pct + '%';
+    }, i * 650);
+  });
+
+  // Scores appear after step 3
+  ['smile','eyes','sharp','light'].forEach((k,i) => {
+    setTimeout(() => {
+      const card = document.getElementById(`ps-${k}`);
+      card.classList.add('shown');
+      const valEl = document.getElementById(`pv-${k}`);
+      const fillEl = document.getElementById(`pb-${k}`);
+      const target = Math.round(scoreData[k].v * 100);
+      let cur = 0;
+      const ticker = setInterval(() => {
+        cur = Math.min(cur + 3, target);
+        valEl.textContent = '.' + String(cur).padStart(2,'0');
+        if (cur >= target) clearInterval(ticker);
+      }, 18);
+      fillEl.style.width = target + '%';
+    }, 2000 + i * 200);
+  });
+
+  // Navigate to preview
+  setTimeout(() => go('preview'), 4800);
+}
+
+/* ── PREVIEW INIT ─────────────────────────────────────────────── */
+function initPreview() {
+  // Date
+  const now = new Date();
+  const d = now.toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' });
+  const el = document.getElementById('strip-date');
+  if (el) el.textContent = d;
+
+  // Animate AI score bars
+  setTimeout(() => {
+    const scores = [92, 78, 85, 71];
+    scores.forEach((s,i) => {
+      const el = document.getElementById(`vs-${i+1}`);
+      if (el) el.style.width = s + '%';
+    });
+  }, 200);
+}
+
+/* ── FILTER ───────────────────────────────────────────────────── */
+function applyFilter(btn) {
+  document.querySelectorAll('.v-filter-opt').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const paper = document.getElementById('strip-paper');
+  // Remove all filter classes
+  paper.classList.remove('f-bw','f-warm','f-fade','f-matte');
+  const f = btn.dataset.f;
+  if (f) paper.classList.add(f);
+}
+
+/* ── CAPTION SYNC ─────────────────────────────────────────────── */
+function syncCaption(input) {
+  const val = input.value;
+  document.getElementById('v-count').textContent = val.length;
+  const onStrip = document.getElementById('strip-caption-input');
+  if (onStrip) onStrip.value = val;
+}
+
+/* ── TILT ─────────────────────────────────────────────────────── */
+function setTilt(btn, deg) {
+  document.querySelectorAll('.v-tilt-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const outer = document.getElementById('strip-outer');
+  if (outer) {
+    outer.style.transform = `rotate(${deg}deg)`;
+    // Also reset hover handlers
+    outer.onmouseenter = null;
+    outer.onmouseleave = null;
+  }
+}
+
+/* ── FORMAT SELECTOR ──────────────────────────────────────────── */
+const fmtSpecs = {
+  classic: '2:6 ratio · 1200 × 3600 px · PNG',
+  story:   '9:16 · 1080 × 1920 px · PNG',
+  square:  '1:1 · 1080 × 1080 px · PNG',
+};
+
+function setFmt(btn, id) {
+  document.querySelectorAll('.d-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  ['classic','story','square'].forEach(k => {
+    const el = document.getElementById('df-' + k);
+    if (el) el.classList.toggle('show', k === id);
+    // For story and square use flex
+    if (el && k === id && k !== 'classic') el.style.display = 'flex';
+    else if (el && k !== id) el.style.display = 'none';
+  });
+  document.getElementById('d-specs').textContent = fmtSpecs[id];
+}
+
+/* ── DOWNLOAD SIMULATION ──────────────────────────────────────── */
+function dl(btn, file) {
+  const arrow = btn.querySelector('.d-item-arrow');
+  arrow.textContent = '✓';
+  btn.style.pointerEvents = 'none';
+  setTimeout(() => { arrow.textContent = '↓'; btn.style.pointerEvents = ''; }, 2200);
+}
+
+/* ── COPY LINK ────────────────────────────────────────────────── */
+function copyLink() {
+  const btn = document.getElementById('copy-btn');
+  btn.textContent = 'Copied';
+  setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+}
+
+/* ── INIT ─────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  go('landing');
+});
+</script>
+
+</body>
+</html>
